@@ -1,4 +1,4 @@
-module SimulationLogging
+module SimulationLogs
 
 using SciMLBase
 
