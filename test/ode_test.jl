@@ -1,5 +1,5 @@
 using DifferentialEquations
-using SimulationLogging
+using SimulationLogs
 
 function lorenz!(du, u, p, t)
     @log u2_u1 = u[2]-u[1]
