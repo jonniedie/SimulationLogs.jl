@@ -2,7 +2,7 @@
 
 Log yr simulations.
 
-```@contents
+<!-- ```@contents
 Pages = ["examples/cruise_control.md"]
 Depth = 2
-```
+``` -->

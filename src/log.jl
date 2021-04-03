@@ -1,7 +1,25 @@
 """
     @log var_name = val
+    @log var_name expr
 
-Log the value `val` to `GLOBAL_LOG` variable `var_name` while setting `var_name` in local scope
+Log `var_name` to the `GLOBAL_LOG`. If `@log` is placed on an assignment for `var_name`, the variable
+will also be created in the local scope. If `@log` is placed with a variable name before an expression,
+the expression will run in the local scope without creating the variable in that scope.
+
+## Example
+```julia
+function lorenz!(du, u, p, t)
+    @log a = u[2]-u[1]
+    @log b u[3]+a
+    du[1] = p[1]*a
+    du[2] = u[1]*(p[2]-u[3]) - u[2]
+    du[3] = u[1]*u[2] - p[3]*u[3]
+end
+```
+In this example, `a` is evaluated into the scope of the `lorenz!` function and is able to be used within
+that scope. `b`, however is not evaluated into the `lorenz!` scope, so no `b` variable is created in
+that scope. Both `a` and `b` will be logged.
+
 """
 macro log(expr)
     return if expr.head == :(=)
@@ -21,11 +39,6 @@ macro log(expr)
     end
 end
 
-"""
-    @log var_name val
-
-Log the value `val` to `GLOBAL_LOG` variable `var_name` without setting `var_name` in local scope
-"""
 macro log(var_name, expr)
     quote
         local val = $(esc(expr))

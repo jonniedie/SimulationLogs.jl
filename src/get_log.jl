@@ -18,10 +18,11 @@ function _get_log(prob, u, t)
         prob.f(getindex.(u, i)..., prob.p, t[i])
     end
 
+    deactivate!()
+    
     out = deepcopy(GLOBAL_LOG[])
     
     reset!()
-    deactivate!()
 
     return out
 end
