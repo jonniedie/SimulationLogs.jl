@@ -22,4 +22,5 @@ makedocs(
 
 deploydocs(
     repo = "github.com/jonniedie/SimulationLogs.git",
+    devbranch = "main"
 )
