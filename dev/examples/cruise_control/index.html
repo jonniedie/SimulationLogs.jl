@@ -6,16 +6,16 @@ using UnPack
 # Simple car with velocity-square drag
 function car!(D, x, p, t; u=0.0)
     @unpack pos, vel = x
-    @unpack CdA, m = p
+    @unpack c, m = p
 
-    drag = CdA*vel^2
+    drag = c*vel^2
     D.pos = vel
     D.vel = (-drag*sign(vel) + u)/m
 end
 
 car_params = (
     m = 1000,
-    CdA = 5,
+    c = 5,
 )
 
 car_ic = ComponentArray(
@@ -55,9 +55,9 @@ sol = solve(prob)</code></pre><p>Now we can bring in the Plots.jl library to loo
 
 plot(sol, vars=2, title=&quot;Velocity&quot;, legend=false)</code></pre><p><img src="../../assets/cruise_control/velocity.svg" alt/></p><p>Great. There&#39;s our velocity. But what if we want to plot the velocity against the reference signal <code>r</code>? Or what if we want to plot the reference tracking error <code>e</code>, control signal <code>u</code>, or even the drag force <code>drag</code>?</p><h3 id="Enter-SimulationLogs"><a class="docs-heading-anchor" href="#Enter-SimulationLogs">Enter SimulationLogs</a><a id="Enter-SimulationLogs-1"></a><a class="docs-heading-anchor-permalink" href="#Enter-SimulationLogs" title="Permalink"></a></h3><pre><code class="language-julia">using SimulationLogs</code></pre><p>Using SimulationLogs, we can tag any variable we&#39;d like to see with the <code>@log</code> macro. So adding that to our simulation functions would look like:</p><pre><code class="language-julia">function car!(D, x, p, t; u=0.0)
     @unpack pos, vel = x
-    @unpack CdA, m = p
+    @unpack c, m = p
 
-    @log drag = CdA*vel^2
+    @log drag = c*vel^2
     D.pos = vel
     D.vel = (-drag*sign(vel) + u)/m
 end
@@ -100,4 +100,4 @@ julia&gt; logsout.drag
  498.74065942087725
  498.94149067684566
  499.10812257810085
- 499.1675529889568</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 21:33">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ 499.1675529889568</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 22:04">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
