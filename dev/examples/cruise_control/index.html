@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Cruise Control · SimulationLogs Documentation</title><link rel="canonical" href="https://jonniedie.github.io/SimulationLogs/stable/examples/cruise_control/"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">SimulationLogs Documentation</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>Cruise Control</a></li></ul></li><li><a class="tocitem" href="../../api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Cruise Control</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Cruise Control</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/jonniedie/SimulationLogs/blob/master/docs/src/examples/cruise_control.md#L" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Cruise-Control"><a class="docs-heading-anchor" href="#Cruise-Control">Cruise Control</a><a id="Cruise-Control-1"></a><a class="docs-heading-anchor-permalink" href="#Cruise-Control" title="Permalink"></a></h1><p>Let&#39;s see how we can use SimulationLogs for a typical controls simulation.</p><p>First, we&#39;ll start with a simple model of a car using ComponentArrays.jl,  DifferentialEquations.jl, and UnPack.jl.</p><pre><code class="language-julia">using ComponentArrays
+using DifferentialEquations
+using UnPack
+
+# Simple car with velocity-square drag
+function car!(D, x, p, t; u=0.0)
+    @unpack pos, vel = x
+    @unpack CdA, m = p
+
+    drag = CdA*vel^2
+    D.pos = vel
+    D.vel = (-drag*sign(vel) + u)/m
+end
+
+car_params = (
+    m = 1000,
+    CdA = 5,
+)
+
+car_ic = ComponentArray(
+    pos = 0.0,
+    vel = 0.0,
+)</code></pre><p>Now this is a pretty boring simulation; the car is just going to sit there. Let&#39;s add a cruise control system to the car so it will track a velocity setpoint. We&#39;ll use a proportional-integral (PI) controller to follow a reference step input.</p><pre><code class="language-julia"># Car with cruise control
+function cruise_car!(D, vars, p, t)
+    @unpack ref, kp, ki = p.control
+    @unpack ∫e, car = vars
+
+    r = ref(t)
+    e = r - car.vel
+    u = kp*e + ki*∫e
+    
+    car!(D.car, car, p.car, t; u)
+    D.∫e = e
+end
+
+# Parameters
+p = (
+    car = car_params,
+    control = (
+        ref = t -&gt; 10*(t&gt;1),
+        kp = 800,
+        ki = 40,
+    )
+)
+
+# Initial conditions
+ic = ComponentArray(
+    car = car_ic,
+    ∫e = 0.0,
+)
+
+prob = ODEProblem(cruise_car!, ic, (0.0, 20.0), p)
+sol = solve(prob)</code></pre><p>Now we can bring in the Plots.jl library to look at our velocity.</p><pre><code class="language-julia">using Plots
+
+plot(sol, vars=2, title=&quot;Velocity&quot;, legend=false)</code></pre><p><img src="../../assets/cruise_control/velocity.svg" alt/></p><p>Great. There&#39;s our velocity. But what if we want to plot the velocity against the reference signal <code>r</code>? Or what if we want to plot the reference tracking error <code>e</code>, control signal <code>u</code>, or even the drag force <code>drag</code>?</p><h3 id="Enter-SimulationLogs"><a class="docs-heading-anchor" href="#Enter-SimulationLogs">Enter SimulationLogs</a><a id="Enter-SimulationLogs-1"></a><a class="docs-heading-anchor-permalink" href="#Enter-SimulationLogs" title="Permalink"></a></h3><pre><code class="language-julia">using SimulationLogs</code></pre><p>Using SimulationLogs, we can tag any variable we&#39;d like to see with the <code>@log</code> macro. So adding that to our simulation functions would look like:</p><pre><code class="language-julia">function car!(D, x, p, t; u=0.0)
+    @unpack pos, vel = x
+    @unpack CdA, m = p
+
+    @log drag = CdA*vel^2
+    D.pos = vel
+    D.vel = (-drag*sign(vel) + u)/m
+end
+
+function cruise_car!(D, vars, p, t)
+    @unpack ref, kp, ki = p.control
+    @unpack ∫e, car = vars
+
+    @log r = ref(t)
+    @log e = r - car.vel
+    @log u = kp*e + ki*∫e
+    
+    car!(D.car, car, p.car, t; u)
+    D.∫e = e
+end</code></pre><p>Now we can re-run our simulation and use the <code>scope</code> function to plot the outputs.</p><pre><code class="language-julia">sol = solve(prob)
+
+p1 = plot(sol, vars=2, title=&quot;Reference Tracking&quot;)
+scope!(sol, :r)
+
+p2 = scope(sol, [:u, :drag], title=&quot;Forces&quot;)
+
+p3 = plot(sol, vars=3, title=&quot;Errors&quot;)
+scope!(sol, :e)
+
+plot(p1, p2, p3, layout=(3,1), size=(600,600))</code></pre><p><img src="../../assets/cruise_control/everything.svg" alt/></p><p>If we want to get our logged variables (not just plot them), we can use the <code>get_log</code> function.</p><pre><code class="language-julia-repl">julia&gt; logsout = get_log(sol)
+SimulationLog with signals:
+  drag :: Float64
+  e :: Float64
+  u :: Float64
+  r :: Int64
+
+
+julia&gt; logsout.drag
+33-element Vector{Float64}:
+   0.0
+   0.0
+   0.0
+   0.0
+   ⋮
+ 498.74065942087725
+ 498.94149067684566
+ 499.10812257810085
+ 499.1675529889568</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../../api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 3 April 2021 19:39">Saturday 3 April 2021</span>. Using Julia version 1.6.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
