@@ -12,16 +12,16 @@ using UnPack
 # Simple car with velocity-square drag
 function car!(D, x, p, t; u=0.0)
     @unpack pos, vel = x
-    @unpack CdA, m = p
+    @unpack c, m = p
 
-    drag = CdA*vel^2
+    drag = c*vel^2
     D.pos = vel
     D.vel = (-drag*sign(vel) + u)/m
 end
 
 car_params = (
     m = 1000,
-    CdA = 5,
+    c = 5,
 )
 
 car_ic = ComponentArray(
@@ -87,9 +87,9 @@ Using SimulationLogs, we can tag any variable we'd like to see with the `@log` m
 ```julia
 function car!(D, x, p, t; u=0.0)
     @unpack pos, vel = x
-    @unpack CdA, m = p
+    @unpack c, m = p
 
-    @log drag = CdA*vel^2
+    @log drag = c*vel^2
     D.pos = vel
     D.vel = (-drag*sign(vel) + u)/m
 end
