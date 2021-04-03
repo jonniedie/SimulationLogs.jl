@@ -9,6 +9,8 @@ If `varnames` is a vector, the variables will be plotted against
 time on the same axis. If `varnames` is a tuple, the variables
 will be plotted against each other.
 """
+scope, scope!
+
 @recipe function f(s::Scope)
     sol, vars = s.args
     t = range(sol.prob.tspan..., length=200)
