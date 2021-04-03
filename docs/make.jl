@@ -20,6 +20,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/jonniedie/SimulationLogs.git",
+    repo = "github.com/jonniedie/SimulationLogs.jl.git",
     devbranch = "main",
 )
