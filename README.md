@@ -1,4 +1,19 @@
 # SimulationLogs
+| **Documentation**                                                               | **Build Status**                                                                                |
+|:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
+| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] | [![][github-img]][github-url] [![][codecov-img]][codecov-url] |
+
+
+[docs-dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[docs-dev-url]: https://jonniedie.github.io/SimulationLogs.jl/dev
+
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://jonniedie.github.io/SimulationLogs.jl/stable
+
+[github-img]: https://github.com/jonniedie/SimulationLogs.jl/workflows/CI/badge.svg
+[github-url]: https://github.com/jonniedie/SimulationLogs.jl/actions/workflows/CI
+[codecov-img]: https://codecov.io/gh/jonniedie/SimulationLogs.jl/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/jonniedie/SimulationLogs.jl
 
 SimulationLogs lets you log variables from within a DifferentialEquations.jl ODE simulation.
 
