@@ -13,7 +13,7 @@ scope, scope!
 
 @recipe function f(s::Scope)
     sol, vars = s.args
-    t = range(sol.prob.tspan..., length=200)
+    t = range(sol.prob.tspan..., length=2000)
     signals = get_log(sol, t)
     seriestype := :path
     xguide --> "t"

@@ -4,7 +4,7 @@ using SimulationLogs
 using Suppressor
 using Test
 
-# @testset "Lorenz example" begin
+@testset "Lorenz example" begin
     function lorenz!(du, u, p, t)
         @log a = u[2]-u[1]
         @log b u[3] + a
@@ -83,12 +83,14 @@ using Test
     end
 
     @testset "Printing" begin
-        @test @capture_out(println(out)) == """
+        @test @capture_out(print(out)) ==
+        """
         SimulationLog with signals:
           a :: Float64
           b :: Float64
           d :: Float64
-          c :: Float64\n\n"""
+          c :: Float64
+        """
     end
 
     @testset "Miscellaneous" begin
@@ -98,7 +100,7 @@ using Test
 
         @test_logs () get_log(sol)
     end
-# end
+end
 
 @testset "Global log" begin
     using SimulationLogs: activate!, deactivate!, reset!

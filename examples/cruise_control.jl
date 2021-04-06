@@ -7,7 +7,7 @@ using Plots
 ## Simulation functions
 # Simple car with velocity-square drag
 function car!(D, x, p, t; u=0.0)
-    @log drag = p.CdA*x.vel^2
+    @log drag = p.c*x.vel^2
     D.pos = x.vel
     D.vel = (-drag*sign(x.vel) + u)/p.m
 end
@@ -28,7 +28,7 @@ end
 p = (
     car = (
         m = 1000,
-        CdA = 5,
+        c = 5,
     ),
     control = (
         ref = t -> 10*(t>1),

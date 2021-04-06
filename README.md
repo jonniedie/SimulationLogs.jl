@@ -84,7 +84,12 @@ julia> out.b
  29.24474520341088
  23.899870630658324
 ```
+
+We can also use `scope` to visually inspect signals from the simulation. This requires using the Plots.jl library. For an interactive scope (pan, zoom, etc.), use the PlotlyJS backend of Plots by calling `plotlyjs()`.
+
 ```julia
+using Plots; plotlyjs()
+
 scope(sol, [:a, :b])
 ```
 <img src="assets/scope.svg" alight="middle" />
