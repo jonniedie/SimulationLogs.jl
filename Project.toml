@@ -1,7 +1,7 @@
 name = "SimulationLogs"
 uuid = "e3c6736c-93d9-479d-93f3-96ff5e8836d5"
 authors = ["Jonnie Diegelman <jonniediegelman@gmail.com>"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"

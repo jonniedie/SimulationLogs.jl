@@ -31,7 +31,7 @@ scope, scope!
 
     else vars isa Tuple
         @series begin
-            label --> string(vars)
+            label --> "("*join(string.(vars).*"(t)", ", ")*")"
             map(var->getproperty(signals, var), vars)
         end
     end
