@@ -24,13 +24,13 @@ that scope. Both `a` and `b` will be logged.
 macro log(expr)
     return if expr.head == :(=)
         quote
-            if is_active(GLOBAL_LOG[])
+            if is_active(GLOBAL_LOG)
                 local val = $(esc(expr.args[2]))
                 local var_name = $((expr.args[1],))[1]
-                if !haskey(values(GLOBAL_LOG[]), var_name)
-                    setproperty!(GLOBAL_LOG[], var_name, typeof(val)[])
+                if !haskey(values(GLOBAL_LOG), var_name)
+                    setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
                 end
-                push!(getindex(values(GLOBAL_LOG[]), var_name), val)
+                push!(getindex(values(GLOBAL_LOG), var_name), val)
             end
             $(esc(expr))
         end
@@ -42,12 +42,12 @@ end
 macro log(var_name, expr)
     quote
         local val = $(esc(expr))
-        if is_active(GLOBAL_LOG[])
+        if is_active(GLOBAL_LOG)
             local var_name = $((var_name,))[1]
-            if !haskey(values(GLOBAL_LOG[]), var_name)
-                setproperty!(GLOBAL_LOG[], var_name, typeof(val)[])
+            if !haskey(values(GLOBAL_LOG), var_name)
+                setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
             end
-            push!(getindex(values(GLOBAL_LOG[]), var_name), val)
+            push!(getindex(values(GLOBAL_LOG), var_name), val)
         end
         val
     end

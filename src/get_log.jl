@@ -18,9 +18,24 @@ function _get_log(prob, u, t)
         prob.f(getindex.(u, i)..., prob.p, t[i])
     end
 
+    n = length(t)
+    for (key, val) in values(GLOBAL_LOG)
+        if length(val) != n
+            if length(val) % n == 0
+                setproperty!(GLOBAL_LOG, key, collect(reshape(val, :, n)'))
+            else
+                @warn """
+                Signal $key was logged $(length(val)) times during $n timesteps. SimulationLogs
+                is not currently set up to handle an ununeven number of `@log` calls per step.
+                """
+                delete!(values(GLOBAL_LOG), key)
+            end
+        end
+    end
+
     deactivate!()
     
-    out = deepcopy(GLOBAL_LOG[])
+    out = deepcopy(GLOBAL_LOG)
     
     reset!()
 

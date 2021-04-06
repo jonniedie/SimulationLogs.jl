@@ -8,7 +8,7 @@ include("log.jl")
 include("get_log.jl")
 include("plot.jl")
 
-const GLOBAL_LOG = Ref(SimulationLog())
+const GLOBAL_LOG = SimulationLog()
 
 export SimulationLog, is_active
 export @log
