@@ -60,7 +60,7 @@ using Test
         using RecipesBase: apply_recipe
 
         AnyDict = Dict{Symbol, Any}
-        t = range(tspan..., length=200)
+        t = range(tspan..., length=2000)
         out = get_log(sol, t)
 
         rec = apply_recipe(AnyDict(), Scope((sol, :a)))
