@@ -26,7 +26,7 @@ function _get_log(prob, u, t)
             else
                 @warn """
                 Signal $key was logged $(length(val)) times during $n timesteps. SimulationLogs
-                is not currently set up to handle an ununeven number of `@log` calls per step.
+                is not currently set up to handle a mixed number of `@log` calls per step.
                 """
                 delete!(values(GLOBAL_LOG), key)
             end
