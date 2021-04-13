@@ -1,4 +1,6 @@
-# SimulationLogs
+# SimulationLogs.jl
+![](https://www.flaticon.com/svg/vstatic/svg/2077/2077030.svg?token=exp=1618329851~hmac=260edf0371d471a490dd00a51df7ac24)
+
 | **Documentation**                                                               | **Build Status**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
 | [![][docs-dev-img]][docs-dev-url] | [![][github-img]][github-url] [![][codecov-img]][codecov-url] |
@@ -109,3 +111,7 @@ It doesn't. Don't do that. There are some good ways we could handle this, but th
 
 ### What if my parameters are changed during the simulation or my simulation depends on some changing global state?
 Then this probably won't work. 
+
+
+## Attributions
+<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
