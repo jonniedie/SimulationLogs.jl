@@ -22,7 +22,7 @@ function _get_log(prob, u, t)
     for (key, val) in values(GLOBAL_LOG)
         if length(val) != n
             if length(val) % n == 0
-                setproperty!(GLOBAL_LOG, key, collect(reshape(val, :, n)'))
+                setproperty!(GLOBAL_LOG, key, collect(permutedims(reshape(val, :, n))))
             else
                 @warn """
                 Signal $key was logged $(length(val)) times during $n timesteps. SimulationLogs

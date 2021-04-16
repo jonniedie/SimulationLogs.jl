@@ -1,37 +1,52 @@
 using ComponentArrays
 using DifferentialEquations
 using SimulationLogs
-using Plots
+using Plots; gr()
+using UnPack
 
 
 ## Simulation functions
 # Simple car with velocity-square drag
-function car!(D, x, p, t; u=0.0)
-    @log drag = p.c*x.vel^2
-    D.pos = x.vel
-    D.vel = (-drag*sign(x.vel) + u)/p.m
+function car!(D, vars, p, t; u=0.0)
+    @unpack vel = vars
+    @unpack c, m = p
+
+    @log drag = c*vel^2
+
+    D.pos = vel
+    D.vel = (-drag*sign(vel) + u)/m
+end
+
+# Proportional-integral control
+function PI!(D, vars, p, t; e)
+    @unpack ∫e = vars
+    @unpack kp, ki = p
+
+    @log u = kp*e + ki*∫e
+
+    D.∫e = e
+    return u
 end
 
 # Car with cruise control
 function feedback_car!(D, vars, p, t)
-    @log r = p.control.ref(t)
+    @log r = p.ref(t)
     @log e = r - vars.car.vel
-    @log u = p.control.kp*e + p.control.ki*vars.∫e
-    
+
+    u = PI!(D.control, vars.control, p.control, t; e=e)
     car!(D.car, vars.car, p.car, t; u)
-    D.∫e = e
 end
 
 
 ## Inputs
 # Parameters
 p = (
+    ref = t -> 10*(t>1),
     car = (
         m = 1000,
         c = 5,
     ),
     control = (
-        ref = t -> 10*(t>1),
         kp = 800,
         ki = 40,
     )
@@ -43,7 +58,9 @@ ic = ComponentArray(
         pos = 0.0,
         vel = 0.0,
     ),
-    ∫e = 0.0,
+    control = (
+        ∫e = 0.0,
+    ),
 )
 
 
