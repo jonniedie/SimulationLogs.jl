@@ -92,11 +92,11 @@ prob = ODEProblem(lorenz!, u0, tspan, p)
         @test @capture_out(print(out)) ==
         """
         SimulationLog with signals:
-          a :: Vector{Float64}
-          b :: Vector{Float64}
-          d :: Matrix{Float64}
-          c :: Vector{Float64}
-          p1 :: Vector{Float64}
+          a :: $(typeof(out.a))
+          b :: $(typeof(out.b))
+          d :: $(typeof(out.d))
+          c :: $(typeof(out.c))
+          p1 :: $(typeof(out.p1))
         """
     end
 
