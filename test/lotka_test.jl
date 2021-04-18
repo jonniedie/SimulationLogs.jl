@@ -44,11 +44,11 @@ end
 @testset "Lotka example" begin
     test_all(f, i=:) = all(f, lotka_sols.iip[i]) && all(f, lotka_sols.oop[i])
     test_cb(f) = test_all(f, 2:3)
-    compare_iip_oop(f) = all(map((iip,oop)->f(iip)==f(oop), lotka_sols...))
+    compare_iip_oop(s) = all(map((iip,oop)->getproperty(iip.log, s)==getproperty(oop.log, s), lotka_sols...))
 
     @test test_all(x->x.log.γ[1]==1)
     @test test_cb(x->x.log.γ[end]==1.1)
 
-    @test compare_iip_oop(x->x.log.γ)
-    @test compare_iip_oop(x->x.log.total_population)
+    @test compare_iip_oop(:γ)
+    @test compare_iip_oop(:total_population)
 end
