@@ -27,10 +27,10 @@ macro log(expr)
             if is_active(GLOBAL_LOG)
                 local val = $(esc(expr.args[2]))
                 local var_name = $((expr.args[1],))[1]
-                if !haskey(values(GLOBAL_LOG), var_name)
+                if !haskey(value_dict(GLOBAL_LOG), var_name)
                     setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
                 end
-                push!(getindex(values(GLOBAL_LOG), var_name), val)
+                push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
             end
             $(esc(expr))
         end
@@ -44,10 +44,10 @@ macro log(var_name, expr)
         local val = $(esc(expr))
         if is_active(GLOBAL_LOG)
             local var_name = $((var_name,))[1]
-            if !haskey(values(GLOBAL_LOG), var_name)
+            if !haskey(value_dict(GLOBAL_LOG), var_name)
                 setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
             end
-            push!(getindex(values(GLOBAL_LOG), var_name), val)
+            push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
         end
         val
     end
