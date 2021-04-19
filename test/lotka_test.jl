@@ -4,11 +4,10 @@ using SimulationLogs
 using Test
 
 function lotka!(du, u, p, t)
-    x, y = u
-    α, β, δ, γ = p
+    @log x, y = u
+    @log α, β, δ, γ = p
 
     @log total_population = x + y
-    @log γ γ
 
     du[1] = α*x - β*x*y
     du[2] = δ*x*y - γ*y
@@ -46,8 +45,14 @@ end
     test_all(f, i=:) = all(f, lotka_sols.iip[i]) && all(f, lotka_sols.oop[i])
     test_cb(f) = test_all(f, 2:3)
 
-    @test test_all(x->x.log.γ[1]==1)
-    @test test_cb(x->x.log.γ[end]==1.1)
+    @testset "Logged values" begin
+        @test test_all(sol->sol.log.γ[1]==1)
+        @test test_all(sol->sol.log.x==sol[1,:])
+        @test test_all(sol->sol.log.y==sol[2,:])
+
+        @test test_all(sol->all(sol.log.α .== sol.prob.p[1]))
+        @test test_cb(sol->sol.log.γ[end] == 1.1)
+    end
 
     this_sol = lotka_sols.iip[1]
 

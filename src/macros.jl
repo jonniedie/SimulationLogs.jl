@@ -23,17 +23,50 @@ that scope. Both `a` and `b` will be logged.
 """
 macro log(expr)
     return if expr.head == :(=)
-        quote
-            if is_active(GLOBAL_LOG)
-                local val = $(esc(expr.args[2]))
-                local var_name = $((expr.args[1],))[1]
-                if !haskey(value_dict(GLOBAL_LOG), var_name)
-                    setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+        if expr.args[1] isa Expr && expr.args[1].head == :tuple
+            quote
+                if is_active(GLOBAL_LOG)
+                    local vals = $(esc(expr.args[2]))
+                    local var_names = $(esc(expr.args[1].args))
+                    for (var_name, val) in zip(var_names, vals)
+                        if !haskey(value_dict(GLOBAL_LOG), var_name)
+                            setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+                        end
+                        push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
+                    end
                 end
-                push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
+                $(esc(expr))
             end
-            $(esc(expr))
+        else
+            quote
+                if is_active(GLOBAL_LOG)
+                    local val = $(esc(expr.args[2]))
+                    local var_name = $((expr.args[1],))[1]
+                    if !haskey(value_dict(GLOBAL_LOG), var_name)
+                        setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+                    end
+                    push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
+                end
+                $(esc(expr))
+            end
         end
+    # elseif expr.head == :tuple
+    #     syms, subexpr = expr.args[1:end-1], expr.args[end]
+    #     if subexpr.head == :(=)
+    #         syms = push!(syms, subexpr.args[1])
+    #         quote
+    #             if is_active(GLOBAL_LOG)
+    #                 local vals = $(esc(subexpr.args[2]))
+    #                 local var_names = $((syms,))[1]
+    #                 for (var_name, val) in zip(var_names, vals)
+    #                     if !haskey(value_dict(GLOBAL_LOG), var_name)
+    #                         setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+    #                     end
+    #                     push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
+    #                 end
+    #             end
+    #         end
+    #     end
     else
         :(error("Must be logging to some variable, use either `@log var_name val` or `@log var_name = val` forms"))
     end
