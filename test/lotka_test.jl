@@ -4,6 +4,7 @@ using SimulationLogs
 using Test
 
 function lotka!(du, u, p, t)
+    @log t
     @log x, y = u
     @log α, β, δ, γ = p
 
@@ -49,6 +50,7 @@ end
         @test test_all(sol->sol.log.γ[1]==1)
         @test test_all(sol->sol.log.x==sol[1,:])
         @test test_all(sol->sol.log.y==sol[2,:])
+        @test test_all(sol->sol.log.t==sol.t)
 
         @test test_all(sol->all(sol.log.α .== sol.prob.p[1]))
         @test test_cb(sol->sol.log.γ[end] == 1.1)

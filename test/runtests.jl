@@ -70,21 +70,21 @@ prob = ODEProblem(lorenz!, u0, tspan, p)
         out = get_log(sol, t)
 
         rec = apply_recipe(AnyDict(), Scope((sol, :a)))
-        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>"a(t)", :seriestype=>:path)
+        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>"a", :seriestype=>:path)
         @test only(rec).args == (t, out.a)
 
         rec = apply_recipe(AnyDict(), Scope((sol, [:b, :c])))
-        @test rec[1].plotattributes == AnyDict(:xguide=>"t", :label=>"b(t)", :seriestype=>:path)
+        @test rec[1].plotattributes == AnyDict(:xguide=>"t", :label=>"b", :seriestype=>:path)
         @test rec[1].args == (t, out.b)
-        @test rec[2].plotattributes == AnyDict(:xguide=>"t", :label=>"c(t)", :seriestype=>:path)
+        @test rec[2].plotattributes == AnyDict(:xguide=>"t", :label=>"c", :seriestype=>:path)
         @test rec[2].args == (t, out.c)
 
         rec = apply_recipe(AnyDict(), Scope((sol, (:a, :c))))
-        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>"(a(t), c(t))", :seriestype=>:path)
+        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>"(a, c)", :seriestype=>:path)
         @test only(rec).args == (out.a, out.c)
 
         rec = apply_recipe(AnyDict(), Scope((sol, :d)))
-        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>"d(t)", :seriestype=>:path)
+        @test only(rec).plotattributes == AnyDict(:xguide=>"t", :label=>["d[:,$i]" for i in (1:5)'], :seriestype=>:path)
         @test only(rec).args == (t, out.d)
     end
 
