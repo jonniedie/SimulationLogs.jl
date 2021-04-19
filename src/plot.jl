@@ -13,7 +13,7 @@ scope, scope!
 
 @recipe function f(s::Scope)
     sol, vars = s.args
-    t = range(sol.prob.tspan..., length=2000)
+    t = range(extrema(sol.t)..., length=2000)
     signals = get_log(sol, t)
     seriestype := :path
     xguide --> "t"
@@ -24,14 +24,20 @@ scope, scope!
     if vars isa AbstractArray
         for var in vars
             @series begin
-                label --> "$(string(var))(t)"
-                t, getproperty(signals, var)
+                x = getproperty(signals, var)
+                if x isa AbstractMatrix
+                    sizes = string.(permutedims(1:size(x, 2)))
+                    label --> string(var) * "[:," .* sizes .* "]"
+                else
+                    label --> "$(string(var))"
+                end
+                t, x
             end
         end
 
     else vars isa Tuple
         @series begin
-            label --> "("*join(string.(vars).*"(t)", ", ")*")"
+            label --> "("*join(string.(vars), ", ")*")"
             map(var->getproperty(signals, var), vars)
         end
     end
