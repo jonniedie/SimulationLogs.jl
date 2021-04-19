@@ -1,13 +1,15 @@
 name = "SimulationLogs"
 uuid = "e3c6736c-93d9-479d-93f3-96ff5e8836d5"
 authors = ["Jonnie Diegelman <jonniediegelman@gmail.com>"]
-version = "0.2.2"
+version = "0.3.1"
 
 [deps]
+DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 
 [compat]
+DiffEqBase = "6.59"
 RecipesBase = "1.1"
-SciMLBase = "1.10"
+SciMLBase = "1.12"
 julia = "1"

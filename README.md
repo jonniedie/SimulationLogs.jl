@@ -20,6 +20,8 @@
 
 SimulationLogs lets you log variables from within a DifferentialEquations.jl ODE simulation.
 
+## News
+As of version 0.3.0, we can now handle cases where parameters change in `DiscreteCallback`s. The callback or callback set must be passed into the `get_log` function through the keyword `callback`. Alternatively, just replace your `solve` with `logged_solve` and everything will be handled automatically. The logged variables from a `logged_solve` can be accessed in a solution object `sol` as `sol.log`.
 ## The Basics
 
 To log a variable, use the `@log` macro before an existing variable declaration in the simulation. The syntax for this looks like:
@@ -32,7 +34,7 @@ To log an expression to an output variable without creating that variable in the
 @log x u[1]+u[3]
 ```
 
-To extract logged values from a simulation, use the `get_log` function. 
+To extract logged values from a simulation, either use the `logged_solve` function to obtain a `Logged` solution or call the `get_log` function on an existing solution object.
 ## Example
 
 ```julia
@@ -107,10 +109,12 @@ There is a global `SimulationLog` that is turned off by default. When it is off,
 Nope. There is no runtime overhead because no logging is actually happening during the simulation.
 
 ### How does this work when the same `@log` gets called multiple times in the same time step (e.g. in a subfunction that gets called more than once)?
-It doesn't. Don't do that. There are some good ways we could handle this, but they aren't implemented right now.
+The logged solution will then be a `n` x `m` `Matrix` where `n` is the number of time steps and `m` is the number of times the `@log` macro was called in a single time step.
 
-### What if my parameters are changed during the simulation or my simulation depends on some changing global state?
-Then this probably won't work. 
+### What if my parameters are changed during the simulation?
+If you do this, *you must include the callback you used to change the parameters* in the `get_log` function as a keyword argument `callback`. If you changed the parameters without using a callback, the results will be incorrect (but in general you shouldn't be changing parameters without a callback anyway). 
+### What if my simulation depends on some changing global state?
+Solutions that changed global state cannot be handled (or, rather, `@log` will most likely give you incorrect results).
 
 
 ## Attributions
