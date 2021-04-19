@@ -96,7 +96,8 @@ end
 
 (sol::Logged)(args...; kwargs...) = sol.sol(args...; kwargs...)
 
-Base.getindex(sol::Logged, i...) = getindex(sol.sol, i...)
+Base.getindex(sol::Logged, i::Int) = getindex(sol.sol, i)
+Base.getindex(sol::Logged, i::Colon) = getindex(sol.sol, i)
 
 @inline Base.getproperty(sol::Logged, s::Symbol) = getproperty(sol, Val(s))
 @inline Base.getproperty(sol::Logged, ::Val{:log}) = getfield(sol, :log)

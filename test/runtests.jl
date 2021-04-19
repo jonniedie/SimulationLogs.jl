@@ -123,7 +123,9 @@ end
     @test out.p1[end] ≈ 11
 end
 
-include("lotka_test.jl")
+@testset "Logged solution" begin
+    include("lotka_test.jl")
+end
 
 @testset "Global log" begin
     using SimulationLogs: activate!, deactivate!, reset!

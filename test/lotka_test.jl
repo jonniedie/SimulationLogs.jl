@@ -48,4 +48,29 @@ end
 
     @test test_all(x->x.log.γ[1]==1)
     @test test_cb(x->x.log.γ[end]==1.1)
+
+    this_sol = lotka_sols.iip[1]
+
+    @testset "Indexing" begin
+        @test this_sol[1] == this_sol.u[1]
+        @test this_sol[:] == this_sol.u
+        @test this_sol[:, :] == reduce(hcat, this_sol.u)
+    end
+
+    @testset "Interpolation" begin
+        @test this_sol(10) ≈ this_sol.u[end]
+    end
+
+    @testset "Properties" begin
+        @test this_sol.log isa SimulationLog
+        @test this_sol.alg == this_sol.sol.alg
+        @test Set(propertynames(this_sol)) == Set((:log, propertynames(this_sol.sol)...))
+    end
+
+    @testset "Printing" begin
+        sol_string = @capture_out(print(this_sol))
+        sol_sol_string = @capture_out(print(this_sol.sol))
+        @test contains(sol_string, sol_sol_string)
+    end
 end
+
