@@ -32,7 +32,7 @@ macro log(expr)
                 end
                 push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
             end
-            :()
+            nothing
         end
     elseif expr.head == :(=)
         if expr.args[1] isa Expr && expr.args[1].head == :tuple
