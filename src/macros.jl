@@ -24,12 +24,15 @@ that scope. Both `a` and `b` will be logged.
 macro log(expr)
     return if expr isa Symbol
         quote
-            local val = $(esc(expr))
-            local var_name = $((expr,))[1]
-            if !haskey(value_dict(GLOBAL_LOG), var_name)
-                setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+            if is_active(GLOBAL_LOG)
+                local val = $(esc(expr))
+                local var_name = $((expr,))[1]
+                if !haskey(value_dict(GLOBAL_LOG), var_name)
+                    setproperty!(GLOBAL_LOG, var_name, typeof(val)[])
+                end
+                push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
             end
-            push!(getindex(value_dict(GLOBAL_LOG), var_name), val)
+            :()
         end
     elseif expr.head == :(=)
         if expr.args[1] isa Expr && expr.args[1].head == :tuple
