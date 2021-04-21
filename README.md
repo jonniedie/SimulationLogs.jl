@@ -20,8 +20,6 @@
 
 SimulationLogs lets you log variables from within a DifferentialEquations.jl ODE simulation.
 
-## News
-As of version 0.3.0, we can now handle cases where parameters change in `DiscreteCallback`s. The callback or callback set must be passed into the `get_log` function through the keyword `callback`. Alternatively, just replace your `solve` with `logged_solve` and everything will be handled automatically. The logged variables from a `logged_solve` can be accessed in a solution object `sol` as `sol.log`.
 ## The Basics
 
 To log a variable, use the `@log` macro before an existing variable declaration in the simulation. The syntax for this looks like:
@@ -98,6 +96,10 @@ using Plots; plotlyjs()
 scope(sol, [:a, :b])
 ```
 <img src="assets/scope.svg" alight="middle" />
+
+
+## News
+As of version 0.3.0, we can now handle cases where parameters change in `DiscreteCallback`s. The callback or callback set must be passed into the `get_log` function through the keyword `callback`. Alternatively, just replace your `solve` with `logged_solve` and everything will be handled automatically. The logged variables from a `logged_solve` can be accessed in a solution object `sol` as `sol.log`.
 
 ## FAQs
 ### How does this work with time stepping and variable caches and all that?
