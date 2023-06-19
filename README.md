@@ -12,7 +12,7 @@
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: https://jonniedie.github.io/SimulationLogs.jl/stable
 
-[github-img]: https://img.shields.io/github/workflow/status/jonniedie/SimulationLogs.jl/CI
+[github-img]: https://img.shields.io/github/actions/workflow/status/jonniedie/SimulationLogs.jl/ci.yml?branch=main
 [github-url]: https://github.com/jonniedie/SimulationLogs.jl/actions/workflows/CI
 
 [codecov-img]: https://img.shields.io/codecov/c/github/jonniedie/SimulationLogs.jl
