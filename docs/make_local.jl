@@ -17,7 +17,6 @@ makedocs(
     repo = "https://github.com/jonniedie/SimulationLogs/blob/{commit}{path}#L{line}",
     sitename = "SimulationLogs Documentation",
     authors = "Jonnie Diegelman",
-    assets=String[],
 )
 
 deploydocs(
