@@ -4,7 +4,7 @@
 Create a `Logged` ODE solution whose logged variables can be accessed through the `.log`
 property.
 
-See also: [`get_log`](@ref), [`solve`](@ref)
+See also: [`get_log`](@ref)
 """
 function logged_solve(prob, args...; callback=nothing, kwargs...)
     p = deepcopy(prob.p)
