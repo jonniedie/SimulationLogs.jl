@@ -28,6 +28,10 @@ scope, scope!
                 if x isa AbstractMatrix
                     sizes = string.(permutedims(1:size(x, 2)))
                     label --> string(var) * "[:," .* sizes .* "]"
+                elseif x isa AbstractVector{<:AbstractVector}
+                    x = stack(x)'
+                    sizes = string.(permutedims(1:size(x, 2)))
+                    label --> string(var) * "[" .* sizes .* "]"
                 else
                     label --> "$(string(var))"
                 end
